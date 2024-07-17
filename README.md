@@ -27,12 +27,11 @@ If you are simply interested in applying context-guided diffusion to your own pr
 
 ```python
 def cgd_regularization_term(
-    model_predictions,
-    context_embeddings,
-    diffusion_time_steps,
-    covariance_scale_hyper,
-    diagonal_offset_hyper,
-    target_variance_hyper,
+    model_predictions: torch.Tensor["batch_size", "num_output_dims"],
+    context_embeddings: torch.Tensor["batch_size", "embedding_dim"]
+    covariance_scale_hyper: float,
+    diagonal_offset_hyper: float,
+    target_variance_hyper: float,
 ):
     """
     Compute the context-guided diffusion regularization term.
@@ -42,8 +41,6 @@ def cgd_regularization_term(
             context batch sampled from a problem-informed context set.
         context_embeddings: The embeddings of the noised context points, derived 
             either from a pre-trained or randomly initialized model.
-        diffusion_time_steps: The diffusion time steps used to noise the context
-            points, sampled from the uniform distribution over [0, T].
         covariance_scale_hyper: The covariance scale hyperparameter, used to        
             determine the strength of the smoothness constraints in K(x).
             Optionally scaled with the noising schedule of the forward process.
@@ -56,6 +53,9 @@ def cgd_regularization_term(
     Returns:
         The context-guided diffusion regularization term.
     """
+
+    from torch.distributions import MultivariateNormal
+    from torch.nn.functional import softplus
 
     # construct the covariance matrix and multiply it with 
     # the covariance scale hyperparameter
