@@ -1,0 +1,34 @@
+.git/
+.idea/
+
+# general git ignore for specific file types across repositories
+
+*.pyc
+*.pkl
+*.out
+*.pth
+*.pt
+*.xyz
+*.npy
+*.npz
+*.txt
+*.pdbqt
+*.mol
+*.yaml
+*.tar.gz
+
+# git ignore for GaUDI code
+
+materials/standard_regression/*
+materials/data/datasets/*
+materials/summary/*
+materials/diffusion_training/*
+materials/generated_molecules/*
+
+# git ignore for MOOD code
+
+small_molecules/logs_*/*
+small_molecules/generated_samples*/*
+!small_molecules/checkpoints/*
+!small_molecules/checkpoints/ZINC250k/gdss_zinc250k_v2.pth
+!small_molecules/checkpoints/ZINC250k/pretrained_model_reinit.pth
