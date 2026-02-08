@@ -4,6 +4,8 @@ This directory contains the code for the experiments with equivariant diffusion 
 
 The following instructions provide a step-by-step guide to running the code and reproducing the experiments from our paper.
 
+>Note: The guidance model's forward pass does currently not use an explicit time-step argument. This is unintentional, however, we expect this to have a negligible effect on model capacity. The EGNN predictor conditions on the time-step by appending it as an input feature. Since inferring t from x_t is straightforward, the lack of an explicit argument is unlikely to significantly affect model expressivity.
+
 ### 1. Environment Setup
 
 The code uses the Python 3.8 environment provided by Weiss et al. and a handful of additional packages. To install the required dependencies, run the following command:
@@ -27,7 +29,7 @@ python train_edm.py --arg_id <arg_id> --name <edm_run_name>
 
 where `<arg_id>` denotes which dataset the model is trained on. `<arg_id>=1` denotes the training set of the cluster split used in the paper and mentioned above, while `<arg_id>=0` denotes a randomly sampled subset of the same size. To reproduce the main experimental results from the paper, only running `python train_edm.py --arg_id 1` is sufficient. The trained model will be saved in `diffusion_training/<run_name>`. A utility SLURM script to train EDMs on both splits with a batch job is provided in `diffusion_model_training.sh`. 
 
-### 4. Training the Time-Conditioned Property Prediction Model
+### 4. Training the Guidance Model
 
 To train regression models for guiding the sample trajectories of the unconditional model, run the following command:
 
@@ -47,6 +49,7 @@ Here, `<arg_id>` denotes which `data split x regularization type x context set` 
 |   5    | cluster split | full context set    | ours |
 |   6    | cluster split | n/a | L2 regularizaton |
 |   7    | cluster split | n/a | weight decay |
+
 
 To reproduce the main experimental results from the paper, only using the `arg_id` range {4, 5, 6, 7} is sufficient. The `hyper_id` argument specifies which element of the hyperparameter search grid is used for a given run. Once training runs with all hyperparameter options are complete, the script automatically selects the hyperparameter combination with the best performance on the validation set and re-trains ten independent models with different random seeds. All results and model checkpoints are saved under `standard_regression/<run_name>`. A utility SLURM script to train guidance models on all relevant `arg_id x hyper_id` combinations with a batch job is provided in `guidance_model_training.sh`.
 
